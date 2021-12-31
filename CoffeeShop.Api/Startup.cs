@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoffeeShop.Data;
 using CoffeeShop.Data.DAL;
 using CoffeeShop.Infra;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace CoffeeShop.Api
 {
@@ -20,6 +22,7 @@ namespace CoffeeShop.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -29,9 +32,7 @@ namespace CoffeeShop.Api
         {
             services.AddControllers();
             services.Configure<DbSettings>(Configuration.GetSection("DbSettings"));
-            services.AddScoped<ItemsRepository>();
-            services.AddScoped<GroupDiscountRepository>();
-            services.AddScoped<OrdersRepository>();
+            services.AddSingleton<DataService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "API Docs", Version = "v1" });

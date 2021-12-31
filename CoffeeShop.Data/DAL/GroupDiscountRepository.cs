@@ -1,16 +1,17 @@
 ﻿using CoffeeShop.Data.Models;
 using CoffeeShop.Infra;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CoffeeShop.Data.DAL
 {
-    public class GroupDiscountRepository : BaseRepository<GroupDiscount>
+    public class GroupDiscountRepository : MongoSet<GroupDiscount>
     {
-        public GroupDiscountRepository(IOptions<DbSettings> dbSettingsOptions)
-            : base(dbSettingsOptions, "GroupDiscount")
+        public GroupDiscountRepository(IMongoDatabase db, string collectionName)
+            : base(db, collectionName)
         {
 
         }

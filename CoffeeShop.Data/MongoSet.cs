@@ -2,24 +2,29 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CoffeeShop.Data
 {
-    public class BaseRepository<T> where T : IEntity, new()
+    public class MongoSet<T> : IQueryable<T> where T : IEntity, new()
     {
-        protected readonly IMongoCollection<T> _collection;
+        private string _collectionName;
+        private IMongoDatabase _db;
+        protected IMongoCollection<T> _collection => _db.GetCollection<T>(_collectionName);
+
+        protected IQueryable<T> _collectionAsQuery => _collection.AsQueryable<T>();
 
         protected readonly DbSettings dbSettings;
 
-        public BaseRepository(IOptions<DbSettings> dbSettingsOptions, string collectionName)
+        public MongoSet(IMongoDatabase db, string collectionName)
         {
-            dbSettings = dbSettingsOptions.Value;
-            var mongoClient = new MongoClient(dbSettings.ConnectionString);
-            var mongoDb = mongoClient.GetDatabase(dbSettings.DatabaseName);
-            _collection = mongoDb.GetCollection<T>(collectionName);
+            _collectionName = collectionName;
+            _db = db;
         }
 
         public async Task<List<T>> GetAsync() =>
@@ -38,5 +43,16 @@ namespace CoffeeShop.Data
 
         public async Task RemoveAsync(string id) =>
             await _collection.DeleteOneAsync(x => x.Id == id);
+
+
+        #region IQueryable
+
+        public Type ElementType => _collectionAsQuery.ElementType;
+        public Expression Expression => _collectionAsQuery.Expression;
+        public IQueryProvider Provider => _collectionAsQuery.Provider;
+        public IEnumerator<T> GetEnumerator() => _collectionAsQuery.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => _collectionAsQuery.GetEnumerator();
+
+        #endregion
     }
 }

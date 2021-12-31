@@ -1,16 +1,17 @@
 ﻿using CoffeeShop.Data.Models;
 using CoffeeShop.Infra;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CoffeeShop.Data.DAL
 {
-    public class OrdersRepository : BaseRepository<Order>
+    public class OrdersRepository : MongoSet<Order>
     {
-        public OrdersRepository(IOptions<DbSettings> dbSettingsOptions)
-            : base(dbSettingsOptions, "Orders")
+        public OrdersRepository(IMongoDatabase db, string collectionName)
+            : base(db, collectionName)
         {
 
         }
