@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoffeeShop.Data;
-using CoffeeShop.Data.DAL;
+using CoffeeShop.Data.BAL;
+using CoffeeShop.Data.DTO;
 using CoffeeShop.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,13 @@ namespace CoffeeShop.Api.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly DataService dataService;
+        private readonly IOrderService orderService;
         private readonly ILogger<OrdersController> logger;
         private readonly MongoContext _dbContext;
-        public OrdersController(DataService dataService, ILogger<OrdersController> logger)
+        public OrdersController(DataService dataService, IOrderService orderService, ILogger<OrdersController> logger)
         {
             this.dataService = dataService;
+            this.orderService = orderService;
             this.logger = logger;
             _dbContext = this.dataService.DbContext;
         }
@@ -29,26 +32,26 @@ namespace CoffeeShop.Api.Controllers
         {
             return await _dbContext.Orders.GetAsync();
         }
-        [HttpGet("New")]
-        public OrderViewModel NewOrder()
-        {
-            return new OrderViewModel();
-        }
+       
         [HttpPost("Place")]
-        public async Task<OrderViewModel> Insert(OrderViewModel viewModel)
+        public async Task<OrderDTO> Insert(OrderDTO dto)
         {
-            await _dbContext.Orders.InsertAsync(viewModel.Order);
-            return viewModel;
+            await _dbContext.Orders.InsertAsync(dto.Order);
+            return dto;
         }
 
         [HttpPost("AddItem")]
-        public OrderViewModel AddItem(OrderViewModel orderViewModel)
+        public OrderDTO AddItem(OrderDTO dto)
         {
-            var groupDiscounts = _dbContext.GroupDiscounts.GetAsync().Result;
-            if (orderViewModel.NewItem != null) orderViewModel.Order.Items.Add(orderViewModel.NewItem);
-            orderViewModel.Order.GetTotal(groupDiscounts);
-            return orderViewModel;
+            orderService.AddItem(dto.NewItem, dto.Order);
+            return dto;
         }
 
+        [HttpPost("RemoveItem")]
+        public OrderDTO RemoveItem(OrderDTO dto)
+        {
+            orderService.RemoveItem(dto.NewItem.SortId, dto.Order);
+            return dto;
+        }
     }
 }

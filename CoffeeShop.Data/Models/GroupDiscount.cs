@@ -7,7 +7,7 @@ using System.Text;
 namespace CoffeeShop.Data.Models
 {
     [BsonIgnoreExtraElements]
-    public class GroupDiscount : IEntity
+    public partial class GroupDiscount : IEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

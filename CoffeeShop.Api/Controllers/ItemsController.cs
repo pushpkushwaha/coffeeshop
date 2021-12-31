@@ -30,11 +30,6 @@ namespace CoffeeShop.Api.Controllers
         {
             return await _dbContext.Items.GetAsync();
         }
-        [HttpGet("AllGroupDiscount")]
-        public async Task<List<GroupDiscount>> AllGroupDiscount()
-        {
-            return await _dbContext.GroupDiscounts.GetAsync();
-        }
 
         [HttpPost("InsertAll")]
         public async Task<List<Item>> InsertAll(List<Item> items)

@@ -1,11 +1,13 @@
-﻿using System;
+﻿using CoffeeShop.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CoffeeShop.Data.Models
+namespace CoffeeShop.Data.DTO
 {
-    public class OrderViewModel 
+    public class OrderDTO
     {
+       
         public Item NewItem { get; set; }
 
         public Order Order { get; set; }
