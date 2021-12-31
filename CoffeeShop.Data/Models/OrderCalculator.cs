@@ -21,11 +21,12 @@ namespace CoffeeShop.Data.Models
         {
             double total = 0;
             double totalDiscount = 0;
-
+            // below business logic depend upon busness requirement
             var t = _groupDiscount.FirstOrDefault(x => x.ItemId == item.Id);
             if (t != null)
             {
                 bool allExists = t.OtherItemIds.All(x => this.Items.Any(y => y.Id == x));
+                
                 totalDiscount = allExists ? item.discount + t.DiscountPercentage : item.discount;
             }
             else

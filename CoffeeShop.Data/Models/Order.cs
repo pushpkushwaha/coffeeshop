@@ -21,6 +21,5 @@ namespace CoffeeShop.Data.Models
 
         public double Total { get; set; }
 
-
     }
 }

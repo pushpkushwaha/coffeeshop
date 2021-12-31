@@ -29,14 +29,25 @@ namespace CoffeeShop.Api.Controllers
         {
             return await _dbContext.Orders.GetAsync();
         }
+        [HttpGet("New")]
+        public OrderViewModel NewOrder()
+        {
+            return new OrderViewModel();
+        }
+        [HttpPost("Place")]
+        public async Task<OrderViewModel> Insert(OrderViewModel viewModel)
+        {
+            await _dbContext.Orders.InsertAsync(viewModel.Order);
+            return viewModel;
+        }
 
-        [HttpPost("New")]
-        public async Task<Order> Insert(Order order)
+        [HttpPost("AddItem")]
+        public OrderViewModel AddItem(OrderViewModel orderViewModel)
         {
             var groupDiscounts = _dbContext.GroupDiscounts.GetAsync().Result;
-            order.GetTotal(groupDiscounts);
-            await _dbContext.Orders.InsertAsync(order);
-            return order;
+            if (orderViewModel.NewItem != null) orderViewModel.Order.Items.Add(orderViewModel.NewItem);
+            orderViewModel.Order.GetTotal(groupDiscounts);
+            return orderViewModel;
         }
 
     }
