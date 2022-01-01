@@ -34,10 +34,14 @@ namespace CoffeeShop.Api.Controllers
         }
        
         [HttpPost("Place")]
-        public async Task<OrderDTO> Insert(OrderDTO dto)
+        public async Task<Order> Insert(Order order)
         {
-            await _dbContext.Orders.InsertAsync(dto.Order);
-            return dto;
+            // order default status will be zero which means new order
+            // status 0= new, 1= preparing, 2= order completed
+
+            order.Date = DateTime.Now;
+            await _dbContext.Orders.InsertAsync(order);
+            return order;
         }
 
         [HttpPost("AddItem")]
